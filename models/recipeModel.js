@@ -5,7 +5,8 @@ const RecipeSchema = new Schema({
     description: { type: String, require: true },
     ingredients: {type: Array, require: true},
     photos: {type: Array, require: false},
-    author: { type: String, require: true },
+    cuisine: { type: String, require: true },
+    author: { type: Object, require: true },
     cost: { type: Number, require: true },
     typeOfMeal: { type: String, require: true },
     createdAt: { type: Date, default: Date.now  }

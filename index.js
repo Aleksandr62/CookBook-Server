@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const apiRouter = require("./router/ApiRouter");
 const recipesRouter = require("./router/RecipesRouter");
+const cookbookRouter = require("./router/CookbookRouter");
 const errorMiddleware = require("./middlewares/error-middleware");
 const {log} = require("nodemon/lib/utils");
 
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, '../client/build')))
 app.use('/api', apiRouter);
 app.use('/recipes', recipesRouter);
+app.use('/cookbook', cookbookRouter);
 app.use('/*', express.static(path.join(__dirname, '../client/build')))
 app.use(errorMiddleware);
 
