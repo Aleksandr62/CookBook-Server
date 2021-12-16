@@ -14,17 +14,9 @@ class CookbookService {
         }
     }
 
-    async create(title, description, recipesId, photo, cuisine, user, createdAt) {
+    async create(recipe) {
         try {
-            const cookbook = await CookbookModel.create({
-                title,
-                description,
-                recipesId,
-                photo,
-                cuisine,
-                user,
-                createdAt
-            });
+            const cookbook = await CookbookModel.create(recipe);
             console.log('Успешно')
             return {
                 ...cookbook,

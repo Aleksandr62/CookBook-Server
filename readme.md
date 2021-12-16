@@ -1,5 +1,27 @@
 ## CookBook Server
 
+### Запрос на создание рецепта (метод POST)
+>http://localhost:5000/recipes/create
+
+body (json):
+```
+{
+"recipe":{
+    "title": "Яичница",
+    "description": "Очень вкусная яичница",
+    "ingredients": ["fff", "sdsdsd"],
+    "photos": ["fff", "sdsdsd"],
+    "author": {"id": "fdf", "name":"Василий"},
+    "typeOfMeal": "Завтрак", 
+    "cost": 1000, 
+    "steps": ["fff", "sdsdsd"],
+    "time": 10,
+    "cuisine": "string",   
+    "portionsAmount": 4
+}
+}
+```
+
 ### Запрос книги (метод GET)
 >http://localhost:5000/cookbook/get/<id_книги>
 
@@ -9,11 +31,13 @@
 body (json):
 ```
 {
-"title": "Книга 1",
-"recipesId": ["11", "12", "13"],
-"description": "string",
-"photo": "c:ddd",
-"user": "61b8fcb710306a0cb5fc8bdf"
+"cookbook": {
+    "title": "Книга 1",
+    "recipesId": ["11", "12", "13"],
+    "description": "string",
+    "photo": "c:ddd",
+    "user": "61b8fcb710306a0cb5fc8bdf"
+}
 }
 ```
 ### Запрос на добавление рецепта в книгу (метод POST)

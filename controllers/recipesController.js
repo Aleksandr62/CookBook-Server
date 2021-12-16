@@ -24,25 +24,8 @@ class RecipesController {
     create = async (req, res, next) => {
         try {
             const createdAt = new Date();
-            const {
-                title,
-                description,
-                ingredients,
-                author,
-                typeOfMeal,
-                cost
-            } = req.body
-            const photos = req.body.photos ? req.body.photos : []
-            const result = await recipesService.create(
-                title,
-                description,
-                ingredients,
-                photos,
-                author,
-                typeOfMeal,
-                cost,
-                createdAt
-            );
+            const {recipe} = req.body
+            const result = await recipesService.create({...recipe, createdAt});
 
             return res.json(result);
         } catch (e) {
@@ -51,26 +34,8 @@ class RecipesController {
     };
     modify = async (req, res, next) => {
         try {
-            const {
-                id,
-                title,
-                description,
-                ingredients,
-                author,
-                typeOfMeal,
-                cost
-            } = req.body
-            const photos = req.body.photos ? req.body.photos : []
-            const result = await recipesService.modify(
-                id,
-                title,
-                description,
-                ingredients,
-                photos,
-                author,
-                typeOfMeal,
-                cost
-            );
+            const {recipe} = req.body
+            const result = await recipesService.modify({...recipe});
 
             return res.json(result);
         } catch (e) {

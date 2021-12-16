@@ -4,7 +4,7 @@ const ApiError = require("../exceptions/api-error.js");
 class RecipesService {
     async getAll() {
         try {
-            const recipes = await RecipeModel.find()
+            const recipes = await RecipeModel.find().exec()
             if (!recipes) throw ApiError.NotFound(`Данные не найдены.`);
             return [...recipes];
         } catch (e) {
@@ -14,45 +14,38 @@ class RecipesService {
 
     async searchByTitle(title) {
         try {
-            const recipe = await RecipeModel.find({title: title}, function (err, docs) {
-                if (err) {
-                    console.log(err)
-                    throw ApiError.NotFound(`Ошибка обновления записи в БД.`, err);
-                } else {
-                    console.log("Result : ", docs);
-                    return [...docs]
-                }
-            });
-            return recipe
+            const recipe = await RecipeModel.find({title: title}).exec()
+            //     , function (err, docs) {
+            //     if (err) {
+            //         console.log(err)
+            //         throw ApiError.NotFound(`Ошибка обновления записи в БД.`, err);
+            //     } else {
+            //         console.log("Result : ", docs);
+            //         return [...docs]
+            //     }
+            // });
+            return [...recipe]
         } catch (e) {
             throw ApiError.NotFound(`Ошибка поиска записи в БД.`, e);
         }
     }
 
-    async create(title, description, ingredients, photos, author, typeOfMeal, cost, createdAt) {
+    async create(recipe) {
         try {
-            const recipe = await RecipeModel.create({
-                title,
-                description,
-                ingredients,
-                photos,
-                author,
-                typeOfMeal,
-                cost,
-                createdAt
-            });
+            console.log(recipe)
+            const result = await RecipeModel.create({...recipe});
             console.log('Успешно')
             return {
-                ...recipe,
+                ...result,
             };
         } catch (e) {
             throw ApiError.NotFound(`Ошибка создания записи в БД.`, e);
         }
     }
 
-    async modify(id, title, description, ingredients, photos, author, typeOfMeal, cost) {
+    async modify({id, ...other}) {
         try {
-            let recipe = await RecipeModel.findById(id).exec();
+            let result = await RecipeModel.findById(id).exec();
             // ,function (err, docs) {
             //     if (err){
             //         console.log(err);
@@ -61,15 +54,10 @@ class RecipesService {
             //         docs.photos.length? recipePhotos = [...photos, docs.photos] : [...photos]
             //     }
             // })
-            console.log(recipe)
+            console.log(result)
+            if(!result) throw new Error()
             const docs = await RecipeModel.updateOne({_id: id}, {
-                title,
-                description,
-                ingredients,
-                photos: [...recipe.photos, ...photos],
-                author,
-                typeOfMeal,
-                cost
+                ...other
             }).exec()
             //     , function (err, docs) {
             //     if (err) {
