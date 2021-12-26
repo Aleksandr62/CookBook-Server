@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
+// const cors = require("cors");
 const path = require('path')
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
@@ -10,18 +10,21 @@ const cookbookRouter = require("./router/CookbookRouter");
 const errorMiddleware = require("./middlewares/error-middleware");
 const {log} = require("nodemon/lib/utils");
 
-const PORT = process.env.PORT || 5000;
+console.log(__dirname)
+console.log(process.env.PORT, process.env.DATABASE_URL)
+
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
 // app.use(cors);
 
-app.use('/', express.static(path.join(__dirname, '../client/build')))
+app.use('/', express.static(path.join(__dirname, 'build')))
 app.use('/api', apiRouter);
 app.use('/recipes', recipesRouter);
 app.use('/cookbook', cookbookRouter);
-app.use('/*', express.static(path.join(__dirname, '../client/build')))
+app.use('/*', express.static(path.join(__dirname, 'build')))
 app.use(errorMiddleware);
 
 const startServer = async () => {

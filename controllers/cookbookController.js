@@ -3,7 +3,7 @@ const ApiError = require("../exceptions/api-error.js");
 const {Schema} = require("mongoose");
 
 class CookbookController {
-    get = async (req, res, next) => {
+    async get  (req, res, next)  {
         try {
             const {params} = req
             console.log(params)
@@ -14,7 +14,7 @@ class CookbookController {
             next(e);
         }
     }
-    create = async (req, res, next) => {
+    async create  (req, res, next)  {
         try {
             const createdAt = new Date();
             const {cookbook} = req.body
@@ -25,7 +25,7 @@ class CookbookController {
             next(e);
         }
     };
-    recipeAdd = async (req, res, next) => {
+    async recipeAdd  (req, res, next)  {
         try {
             const {id, idRecipe} = req.params
             console.log('recipeAdd', id, idRecipe)
@@ -36,7 +36,7 @@ class CookbookController {
             next(e);
         }
     };
-    recipeDelete = async (req, res, next) => {
+    async recipeDelete  (req, res, next) {
         try {
             const {id, idRecipe} = req.params
             console.log('recipeAdd', id, idRecipe)

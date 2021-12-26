@@ -32,8 +32,8 @@ class RecipesService {
 
     async create(recipe) {
         try {
-            console.log(recipe)
-            const result = await RecipeModel.create({...recipe});
+            console.log("service", recipe)
+            const result = await RecipeModel.create(recipe);
             console.log('Успешно')
             return {
                 ...result,
