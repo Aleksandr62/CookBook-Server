@@ -25,6 +25,8 @@ body (json):
 ### Запрос книги (метод GET)
 >http://localhost:5000/cookbook/get/<id_книги>
 
+Тестовая id - 61b8fce2705a4912a41b538c
+
 ### Запрос на создание книги (метод POST)
 >http://localhost:5000/cookbook/create
 
