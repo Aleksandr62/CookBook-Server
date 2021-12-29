@@ -1,11 +1,13 @@
+require("dotenv").config();
 const nodemailer = require("nodemailer");
 
 class MailService {
   constructor() {
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: false,
+      port: process.env.SMTP_PORT || 587,
+      secure: process.env.SMTP_SECURE || false,
+      requireTLS: process.env.SMTP_TLS || true,
       auth: {
         user: process.env.SMTP_USER,
         password: process.env.SMTP_PASSWORD
@@ -13,7 +15,7 @@ class MailService {
     });
   }
   async sendActivationMail(to, link) {
-    await this.transporter.sendMail({
+    const res = await this.transporter.sendMail({
       from: process.env.SMTP_USER,
       to,
       subject: "Активация аккаунта на " + process.env.API_URL,
@@ -25,6 +27,7 @@ class MailService {
         </div>
       `
     });
+    console.log(res)
   }
 }
 

@@ -1,12 +1,11 @@
 const CookbookModel = require("../models/cookbookModel");
+const RecipeModel = require("../models/recipeModel");
 const ApiError = require("../exceptions/api-error.js");
 
 class CookbookService {
-    async get(id) {
+    async getAll() {
         try {
-            console.log(id)
-            const cookbook = await CookbookModel.findById(id)
-            console.log(cookbook)
+            const cookbook = await CookbookModel.find()
             if (cookbook === null) throw ApiError.NotFound(`Данные не найдены.`);
             return cookbook;
         } catch (e) {
@@ -14,10 +13,28 @@ class CookbookService {
         }
     }
 
-    async create(recipe) {
+    async get(id) {
         try {
-            const cookbook = await CookbookModel.create(recipe);
-            console.log('Успешно')
+            console.log(id)
+            const cookbook = await CookbookModel.findById(id)
+            console.log(cookbook)
+            if (cookbook === null) throw ApiError.NotFound(`Данные не найдены.`);
+
+            const recipes = cookbook.recipesId.reduce(async (acc, id) => {
+                acc = [...acc, await RecipeModel.findById(id)]
+                return acc
+            }, [])
+
+            return {cookbook, recipes};
+        } catch (e) {
+            throw ApiError.NotFound(`Ошибка запроса книги.`, e);
+        }
+    }
+
+    async create(cookbook) {
+        try {
+            const cookbook = await CookbookModel.create(cookbook);
+            console.log('Успешно cookbook:', cookbook)
             return {
                 ...cookbook,
             };
@@ -29,7 +46,7 @@ class CookbookService {
     async recipeAdd(id, idRecipe) {
         try {
             let result = null;
-            let cookbook = await CookbookModel.findById(id).exec();
+            let cookbook = await CookbookModel.findById(id);
             console.log(cookbook)
             if (cookbook.recipesId.includes(idRecipe))
                 throw ApiError(200, `Рецепт уже добавлен в книгу.`);
@@ -37,7 +54,7 @@ class CookbookService {
                 result = await CookbookModel.findByIdAndUpdate( id, {
                     recipesId: [...cookbook.recipesId, idRecipe],
                     updatedAt: new Date()
-                }).exec()
+                })
             console.log("Рецепт добавлен : ", result);
             return result
         } catch (e) {

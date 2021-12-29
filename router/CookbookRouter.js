@@ -3,6 +3,8 @@ const cookbookController = require("../controllers/cookbookController");
 
 const cookbookRouter = new Router();
 
+cookbookRouter.get("/get", cookbookController.getAll);
+
 cookbookRouter.get("/get/:id", cookbookController.get);
 
 cookbookRouter.post("/create", cookbookController.create);

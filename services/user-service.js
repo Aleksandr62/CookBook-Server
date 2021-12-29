@@ -8,7 +8,7 @@ const ApiError = require("../exceptions/api-error.js");
 
 class UserService {
   async registration(email, password) {
-
+    console.log("registration service", email, password)
     const existUser = await UserModel.findOne({ email });
     if (existUser)
       throw ApiError.BadRequest(
@@ -20,12 +20,13 @@ class UserService {
     const user = await UserModel.create({
       email,
       password: passwordHash,
-      activationLink
+      activationLink,
+      isActivated: true
     });
-    await mailService.sendActivationMail(
-      email,
-      `${process.env.API_URL}/api/activation/${activationLink}`
-    );
+    // await mailService.sendActivationMail(
+    //   email,
+    //   `${process.env.API_URL}/api/activation/${activationLink}`
+    // );
 
     const userDto = new UserDto(user);
     const tokens = tokenService.generate({ ...userDto });
@@ -38,10 +39,10 @@ class UserService {
   }
 
   async activate(activationLink) {
-    const user = await UserModel.findOne(activationLink);
-    if (!user) ApiError.BadRequest("Некорректная ссылка активации");
-    user.isActivated = true;
-    await user.save();
+    // const user = await UserModel.findOne(activationLink);
+    // if (!user) ApiError.BadRequest("Некорректная ссылка активации");
+    // user.isActivated = true;
+    // await user.save();
   }
 
   async login(email, password) {
@@ -65,6 +66,22 @@ class UserService {
   async logout(refreshToken) {
     const token = await tokenService.removeToken(refreshToken);
     return token;
+  }
+  async refresh(refreshToken) {
+    if (!refreshToken) {
+      throw ApiError.UnauthorizedError();
+    }
+    const userData = tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await tokenService.findToken(refreshToken);
+    if (!userData || !tokenFromDb) {
+      throw ApiError.UnauthorizedError();
+    }
+    const user = await UserModel.findById(userData.id);
+    const userDto = new UserDto(user);
+    const tokens = tokenService.generateTokens({...userDto});
+
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+    return {...tokens, user: userDto}
   }
 }
 

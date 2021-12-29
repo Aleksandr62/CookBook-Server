@@ -3,6 +3,16 @@ const ApiError = require("../exceptions/api-error.js");
 const {Schema} = require("mongoose");
 
 class CookbookController {
+    async getAll  (req, res, next)  {
+        try {
+            const cookbook = await cookbookService.getAll();
+
+            return res.json(cookbook);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     async get  (req, res, next)  {
         try {
             const {params} = req
