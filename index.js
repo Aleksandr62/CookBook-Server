@@ -16,7 +16,8 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-console.log(PORT, process.env.CLIENT_URL)
+console.log("CLIENT_URL", process.env.CLIENT_URL)
+console.log("API_URL", process.env.API_URL)
 
 app.use(cors({
     credentials: true,

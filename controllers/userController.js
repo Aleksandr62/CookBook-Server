@@ -4,7 +4,7 @@ const ApiError = require("../exceptions/api-error.js");
 
 class UserController {
     async registration(req, res, next) {
-        console.log(req.body)
+        console.log("registration", req.body)
         try {
             // const errors = validationResult(req);
             // if (!errors.isEmpty()) {
@@ -30,7 +30,7 @@ class UserController {
     async login(req, res, next) {
         try {
             const {email, password} = req.body;
-            console.log(email, password)
+            console.log("login", email, password)
             const userData = await userService.login(email, password);
 
             res.cookie("refreshToken", userData.refreshToken, {

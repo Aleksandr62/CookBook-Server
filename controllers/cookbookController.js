@@ -26,9 +26,8 @@ class CookbookController {
     }
     async create  (req, res, next)  {
         try {
-            const createdAt = new Date();
             const {cookbook} = req.body
-            const result = await cookbookService.create({...cookbook, createdAt});
+            const result = await cookbookService.create(cookbook);
 
             return res.json(result);
         } catch (e) {

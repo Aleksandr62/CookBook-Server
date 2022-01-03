@@ -36,6 +36,7 @@ class CookbookService {
             const cookbook = await CookbookModel.create(cookbook);
             console.log('Успешно cookbook:', cookbook)
             return {
+                result: "Книга создана",
                 ...cookbook,
             };
         } catch (e) {

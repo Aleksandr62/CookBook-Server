@@ -1,12 +1,13 @@
 const recipesService = require("../services/recipes-service");
 const fileUploadService = require("../services/fileUpload-service");
 const path = require('path');
-const formidable =require('formidable');
+const formidable = require('formidable');
 const RecipeDto = require('../dtos/recipe-dto')
 const ApiError = require("../exceptions/api-error.js");
+const {writeFileSync} = require("fs");
 
 class RecipesController {
-    async getAll  (req, res, next)  {
+    async getAll(req, res, next) {
         try {
 
             const recipes = await recipesService.getAll();
@@ -16,7 +17,8 @@ class RecipesController {
             next(e);
         }
     }
-    async searchByTitle (req, res, next)  {
+
+    async searchByTitle(req, res, next) {
         try {
             const recipe = await recipesService.searchByTitle(req.body.title);
 
@@ -25,16 +27,19 @@ class RecipesController {
             next(e);
         }
     }
-    async create  (req, res, next)  {
+
+    async create(req, res, next) {
         try {
             let recipeData = null;
             let result = null
 
-            const pathImg = path.join(__dirname, '../build/img')
-            const form = formidable({ multiples: true, keepExtensions: true });
+            const form = formidable({multiples: true, keepExtensions: true});
             form.parse(req, async (err, fields, files) => {
-                if(fields) recipeData = new RecipeDto(fields)
+                if (fields) recipeData = new RecipeDto(fields)
                 result = await recipesService.create(recipeData);
+                const resFile = fileUploadService.uploadImgFile(path.join(__dirname, '../build/img'), result._doc._id.toString(), files)
+
+                console.log("resFile", resFile)
             });
             console.log("recipeData", recipeData, result)
 
@@ -45,7 +50,8 @@ class RecipesController {
             next(e);
         }
     };
-    async modify   (req, res, next) {
+
+    async modify(req, res, next) {
         try {
             const {recipe} = req.body
             const result = await recipesService.modify({...recipe});
@@ -55,7 +61,8 @@ class RecipesController {
             next(e);
         }
     };
-    async delete  (req, res, next)  {
+
+    async delete(req, res, next) {
         try {
             const result = await recipesService.delete(req.body.id);
 

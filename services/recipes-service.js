@@ -15,15 +15,6 @@ class RecipesService {
     async searchByTitle(title) {
         try {
             const recipe = await RecipeModel.find({title: title}).exec()
-            //     , function (err, docs) {
-            //     if (err) {
-            //         console.log(err)
-            //         throw ApiError.NotFound(`Ошибка обновления записи в БД.`, err);
-            //     } else {
-            //         console.log("Result : ", docs);
-            //         return [...docs]
-            //     }
-            // });
             return [...recipe]
         } catch (e) {
             throw ApiError.NotFound(`Ошибка поиска записи в БД.`, e);
@@ -36,6 +27,7 @@ class RecipesService {
             const result = await RecipeModel.create(recipe);
             console.log('Успешно')
             return {
+                result: "Рецепт создан",
                 ...result,
             };
         } catch (e) {
@@ -45,29 +37,17 @@ class RecipesService {
 
     async modify({id, ...other}) {
         try {
-            let result = await RecipeModel.findById(id).exec();
-            // ,function (err, docs) {
-            //     if (err){
-            //         console.log(err);
-            //     }
-            //     else{
-            //         docs.photos.length? recipePhotos = [...photos, docs.photos] : [...photos]
-            //     }
-            // })
-            console.log(result)
-            if(!result) throw new Error()
+            let result = await RecipeModel.findById(id);
+
+            if (!result) throw new Error()
             const docs = await RecipeModel.updateOne({_id: id}, {
                 ...other
-            }).exec()
-            //     , function (err, docs) {
-            //     if (err) {
-            //         console.log(err)
-            //         throw ApiError.NotFound(`Ошибка обновления записи в БД.`, err);
-            //     } else {
-                    console.log("Рецепт обновлен : ", docs);
-            //         return true
-            //     }
-            // });
+            })
+            return {
+                result: "Рецепт изменен",
+                ...docs,
+            };
+
         } catch (e) {
             throw ApiError.NotFound(`Ошибка создания запис в БД.`, e);
         }
@@ -75,16 +55,13 @@ class RecipesService {
 
     async delete(id) {
         try {
-            const docs = await RecipeModel.findByIdAndDelete(id).exec()
-            //     , function (err, docs) {
-            //     if (err) {
-            //         console.log(err)
-            //         throw ApiError.NotFound(`Ошибка удаления записи в БД.`, err);
-            //     } else {
-                    console.log("Рецепт удален : ", docs);
-            //         return true
-            //     }
-            // });
+            const result = await RecipeModel.findByIdAndDelete(id)
+
+            console.log("Рецепт удален : ", result);
+            return {
+                result: "Рецепт удален",
+                ...result,
+            };
         } catch (e) {
             throw ApiError.NotFound(`Ошибка создания запис в БД.`, e);
         }
