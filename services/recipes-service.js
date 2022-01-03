@@ -4,9 +4,19 @@ const ApiError = require("../exceptions/api-error.js");
 class RecipesService {
     async getAll() {
         try {
-            const recipes = await RecipeModel.find().exec()
+            const recipes = await RecipeModel.find()
             if (!recipes) throw ApiError.NotFound(`Данные не найдены.`);
             return [...recipes];
+        } catch (e) {
+            throw ApiError.NotFound(`Ошибка запроса данных.`, e);
+        }
+    }
+
+    async getById(id) {
+        try {
+            const recipe = await RecipeModel.findById(id)
+            if (!recipe) throw ApiError.NotFound(`Данные не найдены.`);
+            return recipe;
         } catch (e) {
             throw ApiError.NotFound(`Ошибка запроса данных.`, e);
         }
@@ -35,17 +45,13 @@ class RecipesService {
         }
     }
 
-    async modify({id, ...other}) {
+    async modify(id, ...other) {
         try {
-            let result = await RecipeModel.findById(id);
+            let res = await RecipeModel.findByIdAndUpdate(id, ...other);
 
-            if (!result) throw new Error()
-            const docs = await RecipeModel.updateOne({_id: id}, {
-                ...other
-            })
             return {
                 result: "Рецепт изменен",
-                ...docs,
+                ...res._doc,
             };
 
         } catch (e) {

@@ -37,7 +37,7 @@ class RecipesController {
             form.parse(req, async (err, fields, files) => {
                 if (fields) recipeData = new RecipeDto(fields)
                 result = await recipesService.create(recipeData);
-                const resFile = fileUploadService.uploadImgFile(path.join(__dirname, '../build/img'), result._doc._id.toString(), files)
+                const resFile = await fileUploadService.uploadImgFile(path.join(__dirname, '../build/img'), result._doc._id.toString(), files)
 
                 console.log("resFile", resFile)
             });

@@ -1,4 +1,4 @@
-const {readFileSync, rename} = require("fs");
+const {createReadStream, createWriteStream, rename, mkdirSync} = require("fs");
 const path = require("path");
 const formidable = require('formidable');
 const ApiError = require("../exceptions/api-error.js");
@@ -10,27 +10,34 @@ class FileUploadService {
             if (!files) throw ApiError.NotFound(`Файлы отсутствуют в запросе.`);
             if (!path) throw ApiError(200, `Не указан путь записи файлов (FileUploadService).`);
 
-            Object.keys(files).forEach((key) => {
-                console.log('file', files[key])
-                console.log(path.join(pathImg, idRecipe, key, files[key].originalFilename))
+            const recipe = await recipesService.getById(idRecipe)
+            let urlImg = null
+            let steps = []
+            await Object.keys(files).forEach((key) => {
                 const filePath = path.join(pathImg, idRecipe, key, files[key].originalFilename)
-                const res = rename(path.join(__dirname, files[key].filepath), filePath, function (err, result) {
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        console.log(res)
-                    }
-                });
-                const resWrite = key === 'urlImg' ? recipesService.modify(idRecipe, {
-                        [key]: filePath
-                    })
-                    :
-                    recipesService.modify(idRecipe, {
-                        steps: [...steps, {img: filePath}]
-                    })
-                console.log("uploadImgFile - writeFileSync", res, resWrite)
+
+                mkdirSync(path.join(pathImg, idRecipe, key), {recursive: true})
+
+                let readableStream = createReadStream(files[key].filepath);
+                let writeableStream = createWriteStream(filePath, {flags: "a"});
+                readableStream.pipe(writeableStream);
+
+                key === 'urlImg' ? urlImg = filePath: steps = [...steps, filePath]
             })
-            // return [...recipes];
+            steps = steps.map((val, idx) => ({
+                description: recipe._doc.steps[idx].description, img: val
+            }))
+            const result = await recipesService.modify(idRecipe, {...recipe._doc,
+                urlImg,
+                steps
+                })
+            if(!result) throw ApiError(200, `Не удалось изменить рецепт (FileUploadService).`);
+            return {
+                result: "Рецепт изменен",
+                ...recipe._doc,
+                urlImg,
+                steps
+            };
         } catch (e) {
             throw ApiError.NotFound(`Ошибка записи файлов.`, e);
         }
