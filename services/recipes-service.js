@@ -24,7 +24,7 @@ class RecipesService {
 
     async searchByTitle(title) {
         try {
-            const recipe = await RecipeModel.find({title: title}).exec()
+            const recipe = await RecipeModel.find({title: title})
             return [...recipe]
         } catch (e) {
             throw ApiError.NotFound(`Ошибка поиска записи в БД.`, e);
@@ -45,9 +45,9 @@ class RecipesService {
         }
     }
 
-    async modify(id, ...other) {
+    async modify(id, other) {
         try {
-            let res = await RecipeModel.findByIdAndUpdate(id, ...other);
+            let res = await RecipeModel.findByIdAndUpdate(id,{...other});
 
             return {
                 result: "Рецепт изменен",

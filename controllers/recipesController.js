@@ -53,8 +53,8 @@ class RecipesController {
 
     async modify(req, res, next) {
         try {
-            const {recipe} = req.body
-            const result = await recipesService.modify({...recipe});
+            const {id, ...other} = req.body
+            const result = await recipesService.modify(id, {...other});
 
             return res.json(result);
         } catch (e) {
