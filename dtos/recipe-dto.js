@@ -4,7 +4,7 @@ module.exports = class RecipeDto {
         if(model.description) this.description = model.description;
         if(model.private) this.private = model.private;
         if(model.urlImg)this.urlImg = files.urlImg.originalFilename
-        if(model.author) this.author = model.author;
+        if(model.author) this.author = this.setAuthor(model)
         if(model.cost) this.cost = model.cost;
         if(model.time) this.time = model.time;
         if(model.portionsAmount) this.portionsAmount = model.portionsAmount;
@@ -15,6 +15,13 @@ module.exports = class RecipeDto {
         if(model.kindOfFood) this.kindOfFood = model.kindOfFood;
         if(model.rating) this.rating = model.rating;
     };
+
+    setAuthor(model) {
+        return {
+            id: model.author.id,
+            name: model.author.name,
+        }
+    }
 
     setIngredients(model) {
         const descriptionKeys = Object.keys(model).filter(key => /ingredient.*description/i.test(key))

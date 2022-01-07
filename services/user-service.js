@@ -7,7 +7,7 @@ const UserDto = require("../dtos/user-dto");
 const ApiError = require("../exceptions/api-error.js");
 
 class UserService {
-  async registration(email, password) {
+  async registration(name, email, password) {
     console.log("registration service", email, password)
     const existUser = await UserModel.findOne({ email });
     if (existUser)
@@ -18,6 +18,7 @@ class UserService {
     const activationLink = uuid.v4();
 
     const user = await UserModel.create({
+      name,
       email,
       password: passwordHash,
       activationLink,

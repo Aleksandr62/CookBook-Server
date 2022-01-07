@@ -3,8 +3,6 @@ const fileUploadService = require("../services/fileUpload-service");
 const path = require('path');
 const formidable = require('formidable');
 const RecipeDto = require('../dtos/recipe-dto')
-const ApiError = require("../exceptions/api-error.js");
-const {writeFileSync} = require("fs");
 
 class RecipesController {
     async getAll(req, res, next) {
